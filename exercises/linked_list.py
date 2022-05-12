@@ -55,21 +55,23 @@ class Link:
             return 1
         return 1 + Link.__len__(self.rest)
 
-    def head(self):
-        return self.first
-
-    def tail(self):
-        if self.rest is Link.empty:
-            return self.first
-        return Link.tail(self.rest)
-
     def __getitem__(self, i):
-        assert i >= 0, "Negative indexing not implemented"
+        if i < 0:
+            l = len(self)
+            i = l + i
+            if i > l:
+                raise IndexError("Link index out of range")
         if self.rest == Link.empty and i > 0:
-            raise IndexError(f"Link index out of range")
+            raise IndexError("Link index out of range")
         if i == 0:
             return self.first
         return Link.__getitem__(self.rest, i - 1)
+
+    def head(self):
+        return self[0]
+
+    def tail(self):
+        return self[-1]
 
     def pop(self):
         return self._pophelper(len(self) - 2)

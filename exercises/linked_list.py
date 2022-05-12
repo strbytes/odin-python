@@ -6,10 +6,8 @@ class Link:
         self.first, self.rest = first, rest
 
     def append(self, value):
-        if self.rest is Link.empty:
-            self.rest = Link(value)
-        else:
-            self.rest.append(value)
+        l = self._move_to_link(len(self) - 1)
+        l.rest = Link(value, Link.empty)
 
     def prepend(self, value):
         self.rest = Link(self.first, self.rest)
@@ -69,7 +67,7 @@ class Link:
 
     def __getitem__(self, i):
         l = self._move_to_link(i)
-        return Link(l.first, Link.empty)
+        return l.first
 
     def head(self):
         return self[0]
@@ -104,14 +102,26 @@ class Link:
         l.first = value
 
 
-def remove(lnk, i):
-    # could't figure out how to get this to handle 0 as a method
+def foldr(lnk, f, init):
     if lnk is Link.empty:
-        raise IndexError("Link index out of range")
-    elif i == 0:
-        return lnk.rest
-    else:
-        return Link(lnk.first, lnk.rest)
+        return init
+    return f(lnk.first, foldr(lnk.rest, f, init))
+
+
+def foldl(lnk, f, init):
+    if lnk is Link.empty:
+        return init
+    return foldl(lnk.rest, f, f(lnk.first, init))
+
+
+# def remove(lnk, i): # doesn't work
+#     # could't figure out how to get this to handle 0 as a method
+#     if lnk is Link.empty:
+#         raise IndexError("Link index out of range")
+#     elif i == 0:
+#         return lnk.rest
+#     else:
+#         return Link(lnk.first, lnk.rest)
 
 
 if __name__ == "__main__":

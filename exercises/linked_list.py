@@ -1,23 +1,34 @@
-class Link:
-    # Mostly rebuilding the Link class from Composing Programs
+class Node:
     empty = ()
 
     def __init__(self, first, rest=empty):
+        assert (
+            isinstance(rest, Node) or rest == Node.empty
+        ), "rest must be Node or empty list"
         self.first, self.rest = first, rest
 
-    def append(self, value):
-        l = self._move_to_link(len(self) - 1)
-        l.rest = Link(value, Link.empty)
+    def __len__(self):
+        if self is Node.empty:
+            return 0
+        return 1 + len(self.rest)
 
-    def prepend(self, value):
-        self.rest = Link(self.first, self.rest)
-        self.first = value
+    def _traverse(self, i):
+        if i < 0:
+            l = len(self)
+            i = l + i
+            if i > l:
+                raise IndexError("Node index out of range")
+        if self.rest == Node.empty and i > 0:
+            raise IndexError("Node index out of range")
+        if i == 0:
+            return self
+        return Node._traverse(self.rest, i - 1)
 
     def __str__(self, new=True, start="(", delimit=" ", declose="", end=")"):
-        if self is Link.empty:
+        if self is Node.empty:
             return end
-        if isinstance(self.first, Link):
-            value = Link.__str__(
+        if isinstance(self.first, Node):
+            value = Node.__str__(
                 self.first,
                 new=True,
                 start=start,
@@ -34,7 +45,7 @@ class Link:
             use_start
             + value
             + use_delimit
-            + Link.__str__(
+            + Node.__str__(
                 self.rest,
                 new=False,
                 start=start,
@@ -46,84 +57,36 @@ class Link:
         )
 
     def __repr__(self):
-        return self.__str__(start="Link(", delimit=", Link(", declose=")", end=")")
+        return self.__str__(start="Node(", delimit=", Node(", declose=")", end=")")
+
+
+class Link:
+    def __init__(self):
+        self.head = Node.empty
 
     def __len__(self):
-        if self.rest is Link.empty:
-            return 1
-        return 1 + Link.__len__(self.rest)
+        if self.head is Node.empty:
+            return 0
+        return len(self.head)
 
-    def _move_to_link(self, i):
-        if i < 0:
-            l = len(self)
-            i = l + i
-            if i > l:
-                raise IndexError("Link index out of range")
-        if self.rest == Link.empty and i > 0:
-            raise IndexError("Link index out of range")
-        if i == 0:
-            return self
-        return Link._move_to_link(self.rest, i - 1)
+    def append(self, value):
+        if self.head is Node.empty:
+            self.head = Node(value)
+        else:
+            n = self.head._traverse(len(self.head) - 1)
+            n.rest = Node(value, n.rest)
 
-    def __getitem__(self, i):
-        l = self._move_to_link(i)
-        return l.first
+    def prepend(self, value):
+        self.head = Node(value, self.head)
 
-    def head(self):
-        return self[0]
+    def __str__(self):
+        return str(self.head)
 
-    def tail(self):
-        return self[-1]
-
-    def pop(self):
-        l = self._move_to_link(-2)
-        v = l.rest.first
-        l.rest = Link.empty
-        return v
-
-    def __contains__(self, value):
-        # does not check nested lists
-        if self is Link.empty:
-            return False
-        elif self.first == value:
-            return True
-        return Link.__contains__(self.rest, value)
-
-    def find(self, value, i=0):
-        if self is Link.empty:
-            raise ValueError(f"{value} not in linked list")
-        if self.first == value:
-            return i
-        return Link.find(self.rest, value, i + 1)
-
-    def insert(self, value, i):
-        l = self._move_to_link(i)
-        l.rest = Link(l.first, l.rest)
-        l.first = value
-
-
-def foldr(lnk, f, init):
-    if lnk is Link.empty:
-        return init
-    return f(lnk.first, foldr(lnk.rest, f, init))
-
-
-def foldl(lnk, f, init):
-    if lnk is Link.empty:
-        return init
-    return foldl(lnk.rest, f, f(lnk.first, init))
-
-
-# def remove(lnk, i): # doesn't work
-#     # could't figure out how to get this to handle 0 as a method
-#     if lnk is Link.empty:
-#         raise IndexError("Link index out of range")
-#     elif i == 0:
-#         return lnk.rest
-#     else:
-#         return Link(lnk.first, lnk.rest)
+    def __repr__(self):
+        return self.head.__repr__()
 
 
 if __name__ == "__main__":
-    a = Link(1, Link(2, Link(3)))
-    a.append(Link(4, Link(5)))
+    a = Link()
+    for i in range(3):
+        a.append(i)

@@ -12,6 +12,13 @@ class Node:
             return 0
         return 1 + len(self.rest)
 
+    def _find(self, v, i=0):
+        if self is Node.empty:
+            raise ValueError(f"{v} not in linked list")
+        if self.first == v:
+            return i
+        return Node._find(self.rest, v, i + 1)
+
     def _traverse(self, i):
         if isinstance(i, slice):
             raise NotImplementedError("slices not implemented for Link/Node")
@@ -68,17 +75,20 @@ class Link:
         for item in reversed(args):
             self.head = Node(item, self.head)
 
-    def insert(self, i, v):
-        l = self.head._traverse(i)
-        l.rest = Node(l.first, l.rest)
-        l.first = v
-
     def append(self, value):
         if self.head is Node.empty:
             self.head = Node(value)
         else:
             n = self.head._traverse(len(self.head) - 1)
             n.rest = Node(value, n.rest)
+
+    def find(self, v):
+        return self.head._find(v)
+
+    def insert(self, i, v):
+        l = self.head._traverse(i)
+        l.rest = Node(l.first, l.rest)
+        l.first = v
 
     def prepend(self, value):
         self.head = Node(value, self.head)
@@ -94,6 +104,13 @@ class Link:
         v = l.rest.first
         l.rest = Node.empty
         return v
+
+    def __contains__(self, v):
+        try:
+            self.head._find(v)
+            return True
+        except:
+            return False
 
     def __delitem__(self, i):
         if i >= len(self):  # Check for index 0 on empty list or i == len(self)

@@ -55,7 +55,7 @@ class Link:
             return 1
         return 1 + Link.__len__(self.rest)
 
-    def __getitem__(self, i):
+    def _move_to_link(self, i):
         if i < 0:
             l = len(self)
             i = l + i
@@ -64,8 +64,12 @@ class Link:
         if self.rest == Link.empty and i > 0:
             raise IndexError("Link index out of range")
         if i == 0:
-            return self.first
-        return Link.__getitem__(self.rest, i - 1)
+            return self
+        return Link._move_to_link(self.rest, i - 1)
+
+    def __getitem__(self, i):
+        l = self._move_to_link(i)
+        return Link(l.first, Link.empty)
 
     def head(self):
         return self[0]
@@ -74,14 +78,10 @@ class Link:
         return self[-1]
 
     def pop(self):
-        return self._pophelper(len(self) - 2)
-
-    def _pophelper(self, i):
-        if i == 0:
-            value = self.rest.first
-            self.rest = Link.empty
-            return value
-        return Link._pophelper(self.rest, i - 1)
+        l = self._move_to_link(-2)
+        v = l.rest.first
+        l.rest = Link.empty
+        return v
 
     def __contains__(self, value):
         # does not check nested lists
@@ -99,13 +99,9 @@ class Link:
         return Link.find(self.rest, value, i + 1)
 
     def insert(self, value, i):
-        if self is Link.empty:
-            raise IndexError("Link index out of range")
-        if i == 0:
-            self.rest = Link(self.first, self.rest)
-            self.first = value
-        else:
-            Link.insert(self.rest, value, i - 1)
+        l = self._move_to_link(i)
+        l.rest = Link(l.first, l.rest)
+        l.first = value
 
 
 def remove(lnk, i):

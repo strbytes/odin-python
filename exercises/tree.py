@@ -8,6 +8,11 @@ class Node:
         self.label = label
         self.left, self.right = left, right
 
+    def _min_node(self):
+        if self.left is None:
+            return self
+        return Node._min_node(self.left)
+
     def __eq__(self, other):
         if isinstance(other, Node):
             return self.label == other.label
@@ -60,6 +65,7 @@ class Tree:
             self.root = self._build_tree(lst)
 
     def _build_tree(self, lst):
+        """Build a balanced tree out of a list passed to the constructor"""
         if not lst:
             return None
         left, right = lst[: len(lst) // 2], lst[len(lst) // 2 :]
@@ -76,21 +82,49 @@ class Tree:
         return node
 
     def insert(self, v):
-        def insert(t, v):
-            if v == t.label:
+        """Insert a value v into self"""
+
+        def insert(n, v):
+            # mutates
+            if v == n.label:
                 return
-            if v < t.label:
-                if t.left:
-                    insert(t.left, v)
+            if v < n.label:
+                if n.left:
+                    insert(n.left, v)
                 else:
-                    t.left = Node(v)
+                    n.left = Node(v)
             else:
-                if t.right:
-                    insert(t.right, v)
+                if n.right:
+                    insert(n.right, v)
                 else:
-                    t.right = Node(v)
+                    n.right = Node(v)
 
         insert(self.root, v)
+
+    def remove(self, v):
+        """Remove a value v from self"""
+
+        def remove(n, v):
+            # returns new tree
+            if n is None:
+                return None
+            elif v < n.label:
+                n.left = remove(n.left, v)
+            elif v > n.label:
+                n.right = remove(n.right, v)
+            else:  # v == n.label
+                if n.left is None:
+                    n, temp = None, n.right
+                    return temp
+                elif n.right is None:
+                    n, temp = None, n.left
+                    return temp
+                m = n.right._min_node()
+                n.label = m.label
+                n.right = remove(n.right, n.label)
+            return n
+
+        self.root = remove(self.root, v)
 
     def __repr__(self):
         return "Tree(" + repr(self.root) + ")"

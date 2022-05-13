@@ -8,6 +8,17 @@ class Node:
         self.label = label
         self.left, self.right = left, right
 
+    def _find(self, v, h=0):
+        """Returns the Node with value v and its height, if v exists in the Tree"""
+        if self == None:
+            raise ValueError(f"{v} not in Tree")
+        elif v == self.label:
+            return (self, h)
+        elif v < self.label:
+            return Node._find(self.left, v, h + 1)
+        elif v > self.label:
+            return Node._find(self.right, v, h + 1)
+
     def _min_node(self):
         if self.left is None:
             return self
@@ -81,12 +92,20 @@ class Tree:
         node.right = self._build_tree(right)
         return node
 
+    def find(self, v):
+        """Return the node with the label value v, if it exists"""
+        return self.root._find(v)[0]
+
+    def height_of(self, v):
+        return self.root._find(v)[1]
+
     def insert(self, v):
-        """Insert a value v into self"""
+        """Insert a Node with the label value v into self"""
 
         def insert(n, v):
             # mutates
             if v == n.label:
+                # do nothing if v already present in Tree
                 return
             if v < n.label:
                 if n.left:
@@ -102,7 +121,7 @@ class Tree:
         insert(self.root, v)
 
     def remove(self, v):
-        """Remove a value v from self"""
+        """Remove a Node with the label value v from self"""
 
         def remove(n, v):
             # returns new tree
@@ -125,6 +144,51 @@ class Tree:
             return n
 
         self.root = remove(self.root, v)
+
+    def level_order(self, l):
+        def level_order(n, l):
+            if n == None:
+                raise ValueError(f"no nodes at level {l}")
+            if l == 0:
+                yield n.label
+            else:
+                yield from level_order(n.left, l - 1)
+                yield from level_order(n.right, l - 1)
+
+        return level_order(self.root, l)
+
+    def inorder(self):
+        def inorder(n):
+            if n == None:
+                return
+            else:
+                yield from inorder(n.left)
+                yield [n.label]
+                yield from inorder(n.right)
+
+        return inorder(self.root)
+
+    def preorder(self):
+        def preorder(n):
+            if n == None:
+                return
+            else:
+                yield [n.label]
+                yield from preorder(n.left)
+                yield from preorder(n.right)
+
+        return preorder(self.root)
+
+    def postorder(self):
+        def postorder(n):
+            if n == None:
+                return
+            else:
+                yield from postorder(n.left)
+                yield from postorder(n.right)
+                yield [n.label]
+
+        return postorder(self.root)
 
     def __repr__(self):
         return "Tree(" + repr(self.root) + ")"

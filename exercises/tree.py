@@ -19,6 +19,11 @@ class Node:
         elif v > self.label:
             return Node._find(self.right, v, h + 1)
 
+    def _height(self, h=0):
+        if self == None:
+            return 0
+        return max(h, Node._height(self.left, h + 1), Node._height(self.right, h + 1))
+
     def _min_node(self):
         if self.left is None:
             return self
@@ -98,6 +103,10 @@ class Tree:
 
     def height_of(self, v):
         return self.root._find(v)[1]
+
+    @property
+    def height(self):
+        return self.root._height()
 
     def insert(self, v):
         """Insert a Node with the label value v into self"""

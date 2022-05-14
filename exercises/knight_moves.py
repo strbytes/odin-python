@@ -29,24 +29,36 @@ def legal_moves(pos):
 
 
 def shortest(start, end):
-    def helper(pos, goal, moves):
+    """Test all move combinations in increasing order of length to find the
+    shortest path between start and end using only the moves available to a
+    knight on a chessboard."""
+    assert (
+        start in chessboard and end in chessboard
+    ), "shortest only accepts legal squares on a chessboard"
+
+    def helper(pos, goal, m):
         """Recursively explore all combinations of length move. Return the list
         of moves if a path to goal is found, else None."""
-        assert (
-            moves >= 0 and type(moves) == int
-        ), "moves must be a positive integer or 0"
-        if moves == 0:  # base case
-            return pos if pos == goal else None
+        assert m >= 0 and type(m) == int, "m must be a positive integer or 0"
+        # breakpoint()
+        if m == 0:  # base case
+            return [pos] if pos == goal else None
         else:  # recursive case: moves > 0
             # make a list of all legal moves
-            pass
-            # if goal in list, return [goal]
-            # else return None
+            to_check = legal_moves(pos)
             # return recursive call with moves - 1
+            for c in to_check:
+                result = helper(c, goal, m - 1)
+                if result:  # return first found result
+                    return [pos] + result
 
-        # moves = 0
-        # while type (return value of helper) is None:
-        pass
+    m = 0
+    path = None
+    # test all moves of length m, return path if found, else try moves of length m + 1
+    while path is None:
+        path = helper(start, end, m)
+        m += 1
+    return path
 
 
 def draw_board(list_of_pos):

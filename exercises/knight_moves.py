@@ -22,6 +22,8 @@ for x in (-2, -1, 1, 2):
 
 # check legal moves for a position on the chessboard
 def legal_moves(pos):
+    """Returns a list of all legal moves for a knight on a chessboard from pos"""
+    assert pos in chessboard, "only positions on a chessboard allowed"
     # add knight moves to position
     potential_moves = [(pos[0] + move[0], pos[1] + move[1]) for move in knight_moves]
     # remove results that are not on a chessboard
@@ -40,16 +42,17 @@ def shortest(start, end):
         """Recursively explore all combinations of length move. Return the list
         of moves if a path to goal is found, else None."""
         assert m >= 0 and type(m) == int, "m must be a positive integer or 0"
-        # breakpoint()
         if m == 0:  # base case
             return [pos] if pos == goal else None
         else:  # recursive case: moves > 0
-            # make a list of all legal moves
+            # make a list of all legal moves from pos and search their trees
+            # for a solution of length m - 1
             to_check = legal_moves(pos)
-            # return recursive call with moves - 1
             for c in to_check:
                 result = helper(c, goal, m - 1)
-                if result:  # return first found result
+                if result:
+                    # return first found result; if goal not found in any
+                    # search branch, returns None
                     return [pos] + result
 
     m = 0
@@ -62,6 +65,9 @@ def shortest(start, end):
 
 
 def draw_board(list_of_pos):
+    """Returns a string of a simple representation of a chessboard. Accepts
+    a list of position coordinates and includes them on the board with their
+    index number in the list."""
     draw = ""
     for x in range(8):
         for y in range(8):

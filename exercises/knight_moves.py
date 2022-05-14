@@ -66,7 +66,7 @@ def draw_board(list_of_pos):
     for x in range(8):
         for y in range(8):
             if (x, y) in list_of_pos:
-                draw += "x "
+                draw += str(list_of_pos.index((x, y))) + " "
             else:
                 draw += ". "
         draw += "\n"

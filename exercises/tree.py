@@ -3,7 +3,8 @@ from merge_sort import merge_sort
 
 
 class Node:
-    # BST node
+    """BST node"""
+
     def __init__(self, label, left=None, right=None):
         self.label = label
         self.left, self.right = left, right
@@ -12,6 +13,8 @@ class Node:
         if self == None:
             return True
         this_node = abs(Node._height(self.left) - Node._height(self.right)) <= 1
+        # a Node is balanced if the difference in height for its branches and
+        # all its sub-branches is no more than 1
         return (
             this_node and Node._is_balanced(self.left) and Node._is_balanced(self.right)
         )
@@ -120,8 +123,10 @@ class Node:
 
 
 class Tree:
-    # Container class for Node with interface
+    """Container class for Node with interface"""
+
     def __init__(self, vals):
+        """Constructor. Accepts a List of values or a Node tree for vals."""
         if isinstance(vals, Node):
             self.root = vals
         if isinstance(vals, List):
@@ -147,17 +152,22 @@ class Tree:
         return node
 
     def balance(self):
+        """Balance the Tree, if it is unbalanced."""
         self.root = self.root._balance()
 
     def find(self, v):
-        """Return the node with the label value v, if it exists"""
+        """Return the node with the label value v, if it exists.
+        Raises an exception if the value is not found."""
         return self.root._find(v)[0]
 
     def height_of(self, v):
+        """Returns the height of the branch containing v.
+        Raises an exception if the value is not found."""
         return self.root._find(v)[1]
 
     @property
     def height(self):
+        """Returns the height of the tallest branch of the Tree."""
         return self.root._height()
 
     def insert(self, v):
@@ -185,7 +195,9 @@ class Tree:
         """Remove a Node with the label value v from self"""
         self.root = self.root._remove(v)
 
-    def level_order(self, l):
+    def level_order(self, h):
+        """Return an ordered list of all the Nodes in the Tree at height h."""
+
         def level_order(n, l):
             if n == None:
                 raise ValueError(f"no nodes at level {l}")
@@ -195,9 +207,11 @@ class Tree:
                 yield from level_order(n.left, l - 1)
                 yield from level_order(n.right, l - 1)
 
-        return level_order(self.root, l)
+        return level_order(self.root, h)
 
     def inorder(self):
+        """Return an ordered list of all the nodes in the tree"""
+
         def inorder(n):
             if n == None:
                 return
@@ -209,6 +223,8 @@ class Tree:
         return inorder(self.root)
 
     def preorder(self):
+        """Return a preordered list of all the Nodes in the Tree."""
+
         def preorder(n):
             if n == None:
                 return
@@ -220,6 +236,8 @@ class Tree:
         return preorder(self.root)
 
     def postorder(self):
+        """Return a postordered list of all the Nodes in the Tree."""
+
         def postorder(n):
             if n == None:
                 return

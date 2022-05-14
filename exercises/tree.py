@@ -217,7 +217,7 @@ class Tree:
                 return
             else:
                 yield from inorder(n.left)
-                yield [n.label]
+                yield n.label
                 yield from inorder(n.right)
 
         return inorder(self.root)
@@ -229,7 +229,7 @@ class Tree:
             if n == None:
                 return
             else:
-                yield [n.label]
+                yield n.label
                 yield from preorder(n.left)
                 yield from preorder(n.right)
 
@@ -244,7 +244,7 @@ class Tree:
             else:
                 yield from postorder(n.left)
                 yield from postorder(n.right)
-                yield [n.label]
+                yield n.label
 
         return postorder(self.root)
 
@@ -273,3 +273,23 @@ if __name__ == "__main__":
     print("Attempting to balance...")
     t.balance()
     print("Balanced?", t.root._is_balanced())
+
+    from time import time
+
+    def timer_func(func):
+        # This function shows the execution time of
+        # the function object passed
+        def wrap_func(*args, **kwargs):
+            t1 = time()
+            result = func(*args, **kwargs)
+            t2 = time()
+            print(f"Function {func.__name__!r} executed in {(t2-t1):.4f}s")
+
+        return wrap_func
+
+    t = Tree([random.randint(0, 99) for _ in range(100)])
+    [t.insert(random.randint(50, 150)) for _ in range(100)]
+    print(timer_func(t.balance)())
+    t = Tree([random.randint(0, 99) for _ in range(100)])
+    [t.insert(random.randint(50, 150)) for _ in range(100)]
+    print(timer_func(Tree)(list(t.inorder())))

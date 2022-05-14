@@ -8,6 +8,37 @@ class Node:
         self.label = label
         self.left, self.right = left, right
 
+    def _is_balanced(self):
+        if self == None:
+            return True
+        this_node = abs(Node._height(self.left) - Node._height(self.right)) <= 1
+        return (
+            this_node and Node._is_balanced(self.left) and Node._is_balanced(self.right)
+        )
+
+    def _balance(self):
+        # returns new Node tree
+        if self == None:
+            return self
+        self.left, self.right = Node._balance(self.left), Node._balance(self.right)
+        while not self._is_balanced():
+            if Node._height(self.right) > Node._height(self.left):
+                m = self.right._min_node()
+                self.right = self.right._remove(m.label)
+                self.left = Node(self.label, self.left, None)
+                self.label = m.label
+            else:
+                m = self.left._max_node()
+                self.left = self.left._remove(m.label)
+                self.right = Node(self.label, None, self.right)
+                self.label = m.label
+            # fix branches if higher changes unbalance them
+            if not self.left._is_balanced():
+                self.left = Node._balance(self.left)
+            if not self.right._is_balanced():
+                self.right = Node._balance(self.right)
+        return self
+
     def _find(self, v, h=0):
         """Returns the Node with value v and its height, if v exists in the Tree"""
         if self == None:
@@ -24,10 +55,33 @@ class Node:
             return 0
         return max(h, Node._height(self.left, h + 1), Node._height(self.right, h + 1))
 
+    def _max_node(self):
+        if self.right is None:
+            return self
+        return Node._max_node(self.right)
+
     def _min_node(self):
         if self.left is None:
             return self
         return Node._min_node(self.left)
+
+    def _remove(self, v):
+        # returns new tree
+        if self is None:
+            return None
+        elif v < self.label:
+            self.left = Node._remove(self.left, v)
+        elif v > self.label:
+            self.right = Node._remove(self.right, v)
+        else:  # v == self.label
+            if self.left is None:
+                return self.right
+            elif self.right is None:
+                return self.left
+            m = self.right._min_node()
+            self.label = m.label
+            self.right = Node._remove(self.right, self.label)
+        return self
 
     def __eq__(self, other):
         if isinstance(other, Node):
@@ -48,26 +102,21 @@ class Node:
             return self.label > other
 
     def __repr__(self):
-        if self.left:
-            left = ", " + repr(self.left)
-        else:
-            left = ""
-        if self.right:
-            right = ", " + repr(self.right)
-        else:
-            right = ""
+        # if self.left:
+        left = ", " + repr(self.left)
+        # else:
+        #     left = ""
+        # if self.right:
+        right = ", " + repr(self.right)
+        # else:
+        #     right = ""
         return "Node(" + repr(self.label) + left + right + ")"
 
-    def __str__(self):
-        if self.left:
-            left = ", " + str(self.left)
-        else:
-            left = ""
-        if self.right:
-            right = ", " + str(self.right)
-        else:
-            right = ""
-        return "(" + str(self.label) + left + right + ")"
+    def __str__(self, h=0):
+        if self is None:
+            return ""
+        left, right = Node.__str__(self.left, h + 1), Node.__str__(self.right, h + 1)
+        return left + " " * 3 * h + str(self.label) + "\n" + right
 
 
 class Tree:
@@ -96,6 +145,9 @@ class Tree:
         node.left = self._build_tree(left)
         node.right = self._build_tree(right)
         return node
+
+    def balance(self):
+        self.root = self.root._balance()
 
     def find(self, v):
         """Return the node with the label value v, if it exists"""
@@ -131,28 +183,7 @@ class Tree:
 
     def remove(self, v):
         """Remove a Node with the label value v from self"""
-
-        def remove(n, v):
-            # returns new tree
-            if n is None:
-                return None
-            elif v < n.label:
-                n.left = remove(n.left, v)
-            elif v > n.label:
-                n.right = remove(n.right, v)
-            else:  # v == n.label
-                if n.left is None:
-                    n, temp = None, n.right
-                    return temp
-                elif n.right is None:
-                    n, temp = None, n.left
-                    return temp
-                m = n.right._min_node()
-                n.label = m.label
-                n.right = remove(n.right, n.label)
-            return n
-
-        self.root = remove(self.root, v)
+        self.root = self.root._remove(v)
 
     def level_order(self, l):
         def level_order(n, l):
@@ -204,3 +235,23 @@ class Tree:
 
     def __str__(self):
         return str(self.root)
+
+
+if __name__ == "__main__":
+    import random
+
+    print("Building Tree with 100 random integers 0-99.")
+    t = Tree([random.randint(0, 99) for _ in range(100)])
+    print("Built:", t.__repr__())
+    print("Balanced? ", t.root._is_balanced())
+    print("In order:", list(t.inorder()))
+    print("Pre-order:", list(t.preorder()))
+    print("Post-order:", list(t.postorder()))
+    print()
+    print("Adding 100 more random integers.")
+    [t.insert(random.randint(50, 150)) for _ in range(100)]
+    print("Tree:", t.__repr__())
+    print("Balanced?", t.root._is_balanced())
+    print("Attempting to balance...")
+    t.balance()
+    print("Balanced?", t.root._is_balanced())

@@ -1,4 +1,4 @@
-from tictactoe import Board
+from tictactoe import Board, Player, Game
 import pytest
 
 
@@ -61,3 +61,48 @@ class TestBoard:
         with pytest.raises(ValueError):
             b.add_play(9, "O")
             b.add_play(10, "X")
+
+
+class TestPlayer:
+    p = Player("Armando")
+
+    def test_init(self):
+        assert self.p.name == "Armando"
+        assert self.p.wins == 0
+        assert self.p.symbol == None
+
+
+class TestGame:
+    g = Game()
+
+    def test_game(self):
+        assert isinstance(self.g.board, Board)
+        with pytest.raises(AttributeError):
+            self.g.player_one.name
+        assert self.g.turn == 0
+
+    def test_add_player(self):
+        self.g.add_player(Player("1")), self.g.add_player(Player("2"))
+        with pytest.raises(ValueError):
+            self.g.add_player(Player("3"))
+        assert self.g.player_one.name == "1"
+        assert self.g.player_one.symbol == "X"
+        assert self.g.player_two.name == "2"
+        assert self.g.player_two.symbol == "O"
+
+    def test_check_no_winner(self):
+        assert self.g.check_winner() == None
+        for x in (1, 2, 5, 6, 7):
+            self.g.board.add_play(x, "X")
+            assert self.g.check_winner() == None
+
+    def test_check_winner(self):
+        self.g.board = Board()
+        for x in (1, 2, 3):
+            self.g.board.add_play(x, "X")
+            print(self.g.board.display())
+        assert self.g.check_winner() == self.g.player_one
+        self.g.board = Board()
+        for x in (3, 5, 7):
+            self.g.board.add_play(x, "O")
+        assert self.g.check_winner() == self.g.player_two

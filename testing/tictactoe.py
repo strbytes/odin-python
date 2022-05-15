@@ -2,6 +2,16 @@ class Board:
     def __init__(self):
         self.plays = ["." for _ in range(9)]
 
+    def add_play(self, pos, symbol):
+        if len(symbol) != 1:
+            raise ValueError("Board only accepts single character symbols")
+        if (pos - 1) not in range(len(self.plays)):
+            raise IndexError("Board only accepts plays in positions 0 - 9")
+        if self.plays[pos - 1] != ".":
+            raise ValueError("square already played")
+        # positions displayed to the user are 1-indexed
+        self.plays[pos - 1] = symbol
+
     def display(self):
         return (
             f" {self.plays[0]} | {self.plays[1]} | {self.plays[2]} \n"

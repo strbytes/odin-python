@@ -37,3 +37,35 @@ class Board:
             + "-----------\n"
             + f" {available[6]} | {available[7]} | {available[8]} "
         )
+
+
+class Player:
+    """Stores information about a player"""
+
+    def __init__(self, name):
+        self.name = name
+        self.wins = 0
+        self.symbol = None
+
+    def __str__(self):
+        return self.name
+
+
+class Game:
+    """Stores the current game state"""
+
+    def __init__(self):
+        self.board = Board()
+        self.player_one, self.player_two = None, None
+        self.turn = 0
+
+    def add_player(self, player):
+        assert isinstance(player, Player), "Game requires a Player instance"
+        if self.player_one is None:
+            self.player_one = player
+            self.player_one.symbol = "X"
+        elif self.player_two is None:
+            self.player_two = player
+            self.player_two.symbol = "O"
+        else:
+            raise ValueError("Game only supports two players")

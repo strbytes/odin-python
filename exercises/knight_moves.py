@@ -79,3 +79,12 @@ def draw_board(list_of_pos):
                 draw += ". "
         draw += "\n"
     return draw
+
+
+if __name__ == "__main__":
+    print(
+        "Generating and displaying all of the shortest possible moves from (1, 1) to (4, 5)"
+    )
+    results = shortest((1, 1), (4, 5))
+    for r in results:
+        print(draw_board(r))

@@ -33,35 +33,37 @@ def legal_moves(pos):
 def shortest(start, end):
     """Test all move combinations in increasing order of length to find the
     shortest path between start and end using only the moves available to a
-    knight on a chessboard."""
+    knight on a chessboard. Returns a list of all possible paths of the
+    shortest length."""
     assert (
         start in chessboard and end in chessboard
     ), "shortest only accepts legal squares on a chessboard"
 
     def helper(pos, goal, m):
-        """Recursively explore all combinations of length move. Return the list
-        of moves if a path to goal is found, else None."""
+        """Generator that recursively explores all possible combinations of
+        moves a knight on a chessboard can take to reach the goal square from
+        the current square (pos). Yield the list of moves if a path to goal is
+        found."""
         assert m >= 0 and type(m) == int, "m must be a positive integer or 0"
         if m == 0:  # base case
-            return [pos] if pos == goal else None
+            if pos == goal:
+                yield [pos]
         else:  # recursive case: moves > 0
             # make a list of all legal moves from pos and search their trees
-            # for a solution of length m - 1
+            # for a solution
             to_check = legal_moves(pos)
             for c in to_check:
-                result = helper(c, goal, m - 1)
-                if result:
-                    # return first found result; if goal not found in any
-                    # search branch, returns None
-                    return [pos] + result
+                next_level_gen = helper(c, goal, m - 1)
+                yield from [[pos] + result for result in list(next_level_gen)]
 
     m = 0
-    path = None
-    # test all moves of length m, return path if found, else try moves of length m + 1
-    while path is None:
-        path = helper(start, end, m)
+    results = None
+    while not results:
+        # combine all results of legal combinations of moves of length m
+        # if any are found, stop the search and return the list of legal combinations
+        results = list(helper(start, end, m))
         m += 1
-    return path
+    return results
 
 
 def draw_board(list_of_pos):

@@ -25,3 +25,28 @@ class TestBoard:
             b.display()
             == " O | O | O \n-----------\n O | O | O \n-----------\n O | O | O "
         )
+
+    def test_available_empty(self):
+        b = Board()
+        assert (
+            b.available_moves()
+            == " 1 | 2 | 3 \n-----------\n 4 | 5 | 6 \n-----------\n 7 | 8 | 9 "
+        )
+
+    def test_available_full(self):
+        b = Board()
+        b.plays = ["O" if i % 2 else "X" for i in range(9)]
+        assert (
+            b.available_moves()
+            == " X | O | X \n-----------\n O | X | O \n-----------\n X | O | X "
+        )
+
+    def test_available_partial(self):
+        b = Board()
+        b.plays = [
+            "X" if i % 3 == 0 else "O" if i % 3 - 1 == 0 else "." for i in range(9)
+        ]
+        assert (
+            b.available_moves()
+            == " X | O | 3 \n-----------\n X | O | 6 \n-----------\n X | O | 9 "
+        )

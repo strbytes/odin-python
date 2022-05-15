@@ -1,4 +1,5 @@
 from tictactoe import Board
+import pytest
 
 
 class TestBoard:
@@ -50,3 +51,13 @@ class TestBoard:
             b.available_moves()
             == " X | O | 3 \n-----------\n X | O | 6 \n-----------\n X | O | 9 "
         )
+
+    def test_add_play(self):
+        b = Board()
+        b.add_play(1, "X")
+        assert b.plays == ["X"] + ["."] * 8
+        b.add_play(9, "O")
+        assert b.plays == ["X"] + ["."] * 7 + ["O"]
+        with pytest.raises(ValueError):
+            b.add_play(9, "O")
+            b.add_play(10, "X")

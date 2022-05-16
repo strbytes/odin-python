@@ -59,6 +59,10 @@ class Game:
         self.player_one, self.player_two = None, None
         self.turn = 0
 
+    @property
+    def whose_turn(self):
+        return self.player_one if self.turn % 2 == 0 else self.player_two
+
     def add_player(self, player):
         assert isinstance(player, Player), "Game requires a Player instance"
         if self.player_one is None:
@@ -86,3 +90,10 @@ class Game:
             if p[a] == p[b] == p[c] != ".":
                 return self.player_one if p[a] == "X" else self.player_two
         return None
+
+    def play_turn(self, pos):
+        self.board.add_play(pos, self.whose_turn.symbol)
+        self.turn += 1
+        if winner := self.check_winner():
+            winner.wins += 1
+            return winner

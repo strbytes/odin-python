@@ -1,5 +1,5 @@
-import tictactoe
-import pytest
+import tictactoe, pytest
+from io import StringIO
 
 
 @pytest.fixture
@@ -141,3 +141,11 @@ class TestGame:
         assert game_with_players.player_one.wins == 1
         with pytest.raises(ValueError):
             game_with_players.play_turn(1)
+
+
+def test_play_round(player_one, player_two, monkeypatch, capsys):
+    plays = StringIO("1\n3\n3\n5\n7\n9\n")
+    monkeypatch.setattr("sys.stdin", plays)
+    assert tictactoe.play_round(player_one, player_two) == player_one
+    captured = capsys.readouterr()
+    assert "already been played" in captured.out

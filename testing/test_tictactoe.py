@@ -106,3 +106,18 @@ class TestGame:
         for x in (3, 5, 7):
             self.g.board.add_play(x, "O")
         assert self.g.check_winner() == self.g.player_two
+
+    def test_play_turn(self):
+        self.g.board = Board()
+        # play a game across the first 7 tiles in order, with players alternating
+        # produces a win on turn 7
+        for i in range(1, 7):
+            self.g.play_turn(i)
+            assert self.g.turn == i  # turn number happens to coincide with test plays
+            assert self.g.board.plays[i - 1] == "O" if i % 2 == 0 else "X"
+            assert self.g.check_winner() == None
+        self.g.play_turn(7)
+        assert self.g.check_winner() == self.g.player_one
+        assert self.g.player_one.wins == 1
+        with pytest.raises(ValueError):
+            self.g.play_turn(1)

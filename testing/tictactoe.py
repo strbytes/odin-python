@@ -69,3 +69,20 @@ class Game:
             self.player_two.symbol = "O"
         else:
             raise ValueError("Game only supports two players")
+
+    def check_winner(self):
+        win_states = [
+            (0, 1, 2),
+            (3, 4, 5),
+            (6, 7, 8),
+            (0, 3, 6),
+            (1, 4, 7),
+            (2, 5, 8),
+            (0, 4, 8),
+            (2, 4, 6),
+        ]
+        p = self.board.plays
+        for a, b, c in win_states:
+            if p[a] == p[b] == p[c] != ".":
+                return self.player_one if p[a] == "X" else self.player_two
+        return None

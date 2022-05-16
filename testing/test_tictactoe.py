@@ -1,10 +1,10 @@
-from tictactoe import Board, Player, Game
+import tictactoe
 import pytest
 
 
 @pytest.fixture
 def new_board():
-    return Board()
+    return tictactoe.Board()
 
 
 class TestBoard:
@@ -62,12 +62,12 @@ class TestBoard:
 
 @pytest.fixture
 def player_one():
-    return Player("1")
+    return tictactoe.Player("1")
 
 
 @pytest.fixture
 def player_two():
-    return Player("2")
+    return tictactoe.Player("2")
 
 
 class TestPlayer:
@@ -82,7 +82,7 @@ class TestPlayer:
 
 @pytest.fixture
 def new_game():
-    return Game()
+    return tictactoe.Game()
 
 
 @pytest.fixture
@@ -94,7 +94,7 @@ def game_with_players(new_game, player_one, player_two):
 
 class TestGame:
     def test_game(self, new_game):
-        assert isinstance(new_game.board, Board)
+        assert isinstance(new_game.board, tictactoe.Board)
         with pytest.raises(AttributeError):
             new_game.player_one.name
         assert new_game.turn == 0
@@ -116,17 +116,17 @@ class TestGame:
             assert new_game.check_winner() == None
 
     def test_check_winner(self, game_with_players):
-        game_with_players.board = Board()
+        game_with_players.board = tictactoe.Board()
         for x in (1, 2, 3):
             game_with_players.board.add_play(x, "X")
         assert game_with_players.check_winner() == game_with_players.player_one
-        game_with_players.board = Board()
+        game_with_players.board = tictactoe.Board()
         for x in (3, 5, 7):
             game_with_players.board.add_play(x, "O")
         assert game_with_players.check_winner() == game_with_players.player_two
 
     def test_play_turn(self, game_with_players):
-        game_with_players.board = Board()
+        game_with_players.board = tictactoe.Board()
         # play a game across the first 7 tiles in order, with players alternating
         # produces a win on turn 7
         for i in range(1, 7):

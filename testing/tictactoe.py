@@ -97,3 +97,23 @@ class Game:
         if winner := self.check_winner():
             winner.wins += 1
             return winner
+
+
+def play_round(player_one, player_two):
+    game = Game()
+    game.add_player(player_one)
+    game.add_player(player_two)
+    winner = None
+    while not winner:
+        print()
+        print(game.board.available_moves())
+        play = input(str(game.whose_turn) + ", choose your play: ")
+        try:
+            game.play_turn(int(play))
+        except ValueError as e:
+            if e.args[0] == "square already played":
+                print("That square has already been played.")
+        winner = game.check_winner()
+    print(game.board.display())
+    print(str(winner) + " wins!")
+    return winner

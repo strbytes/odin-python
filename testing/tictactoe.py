@@ -117,3 +117,17 @@ def play_round(player_one, player_two):
     print(game.board.display())
     print(str(winner) + " wins!")
     return winner
+
+
+if __name__ == "__main__":
+    player_one = Player(input("Player One, enter your name: "))
+    player_two = Player(input("Player Two, enter your name: "))
+    winner = play_round(player_one, player_two)
+    if "y" in input("Two out of three?").lower():
+        while player_one.wins < 2 and player_two.wins < 2:
+            winner = play_round(player_one, player_two)
+            print(
+                f"The score is: \n{player_one}: {player_one.wins}\n"
+                + f"{player_two}: {player_two.wins}"
+            )
+    print("Game over")

@@ -7,3 +7,14 @@ ENDC = "\x1b[0m"
 class Board:
     def __init__(self):
         self.plays = {i: [] for i in range(7)}
+
+    def add_play(self, column, color):
+        if type(column) is not int:
+            raise ValueError(f"add_play accepts integers as input, not {type(column)}")
+        if column < 0 or column > 6:
+            raise ValueError(f"column {column} is out of bounds")
+        if color not in (RED, BLUE):
+            raise ValueError(f"invalid color input {color}")
+        if len(self.plays[column]) >= 6:
+            raise ValueError(f"column {column} is full")
+        self.plays[column].append(color)

@@ -18,3 +18,15 @@ class Board:
         if len(self.plays[column]) >= 6:
             raise ValueError(f"column {column} is full")
         self.plays[column].append(color)
+
+    def __str__(self):
+        board = ""
+        for y in reversed(range(6)):
+            for x in range(7):
+                try:
+                    board += self.plays[x][y] + "⚫" + ENDC
+                except IndexError:
+                    board += ". "
+            board += "\n"
+        board += "1 2 3 4 5 6 7 "
+        return board

@@ -66,3 +66,25 @@ class TestBoard:
     def test__str__(self, new_board):
         # visual testing only
         pass
+
+
+@pytest.fixture
+def player_one():
+    return connect_four.Player("1", connect_four.RED)
+
+
+@pytest.fixture
+def player_two():
+    return connect_four.Player("2", connect_four.BLUE)
+
+
+class TestPlayer:
+    def test_init(self, player_one, player_two):
+        assert player_one.name == "1"
+        assert player_one.color == connect_four.RED
+        assert player_two.name == "2"
+        assert player_two.color == connect_four.RED
+
+    def test__str__(self, player_one, player_two):
+        assert str(player_one) == "1"
+        assert str(player_two) == "2"

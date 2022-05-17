@@ -30,3 +30,11 @@ class Board:
             board += "\n"
         board += "1 2 3 4 5 6 7 "
         return board
+
+
+class Player:
+    def __init__(self, name, color):
+        self.name, self.color = name, color
+
+    def __str__(self):
+        return self.name

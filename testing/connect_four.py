@@ -11,7 +11,7 @@ class Board:
 
     def add_play(self, column, color):
         if type(column) is not int:
-            raise ValueError(f"add_play accepts integers as input, not {type(column)}")
+            raise TypeError(f"add_play accepts integers as input, not {type(column)}")
         if column < 0 or column > 6:
             raise ValueError(f"column {column} is out of bounds")
         if color not in (RED, BLUE):

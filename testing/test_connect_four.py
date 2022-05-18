@@ -31,7 +31,7 @@ class TestBoard:
 
         # test non-integer plays
         for i in ["red", True, "\033[92m"]:  # ]
-            with pytest.raises(ValueError) as e_non_integer:
+            with pytest.raises(TypeError) as e_non_integer:
                 new_board.add_play(i, connect_four.RED)
             assert "integer" in str(
                 e_non_integer.value
@@ -207,27 +207,27 @@ class TestGame:
             i: ["" for _ in range(6)] for i in range(7)
         }, "expected game board to be empty Board"
 
-    def test_play_turn(self, new_game, capsys):
-        new_game.play_turn(8)
-        captured = capsys.readouterr()
-        assert (
-            "column from 1 to 7" in captured.out
-        ), "expected message about incorrect play attempt for input 8"
-        new_game.play_turn("a")
-        captured = capsys.readouterr()
-        assert (
-            "column from 1 to 7" in captured.out
-        ), "expected message about incorrect play attempt for input 'a'"
+    def test_play_turn(self, new_game):
+        with pytest.raises(ValueError) as out_of_bounds:
+            new_game.play_turn(8)
+        assert "out of bounds" in str(
+            out_of_bounds.value
+        ), "expected out of bounds exception for input 8"
+        with pytest.raises(TypeError) as type_error:
+            new_game.play_turn("a")
+        assert "accepts integers" in str(
+            type_error.value
+        ), "expected TypeError for input 'a'"
         for i in range(6):
             new_game.play_turn(1)
             turn = connect_four.RED if i % 2 == 0 else connect_four.BLUE
             assert (
                 new_game.board.plays[0][i] == turn
             ), f"expected {turn} at new_game.board.plays[0][{i}]"
-        new_game.play_turn(1)
-        captured = capsys.readouterr()
-        assert (
-            "column is full" in captured.out
+        with pytest.raises(ValueError) as column_full:
+            new_game.play_turn(1)
+        assert "is full" in str(
+            column_full.value
         ), "expected column is full exception for input 1"
 
     def test_check_win(self, new_game, game_win_states, game_no_win_states):
@@ -255,3 +255,27 @@ def test_play_game(player_one, player_two, monkeypatch, capsys):
     assert connect_four.play_game("1", "2") == player_one
     captured = capsys.readouterr()
     assert "has won!" in captured
+
+
+def test_play_game_errors(new_game, capsys):
+    new_game.play_turn(8)
+    captured = capsys.readouterr()
+    assert (
+        "column from 1 to 7" in captured.out
+    ), "expected message about incorrect play attempt for input 8"
+    new_game.play_turn("a")
+    captured = capsys.readouterr()
+    assert (
+        "column from 1 to 7" in captured.out
+    ), "expected message about incorrect play attempt for input 'a'"
+    for i in range(6):
+        new_game.play_turn(1)
+        turn = connect_four.RED if i % 2 == 0 else connect_four.BLUE
+        assert (
+            new_game.board.plays[0][i] == turn
+        ), f"expected {turn} at new_game.board.plays[0][{i}]"
+    new_game.play_turn(1)
+    captured = capsys.readouterr()
+    assert (
+        "column is full" in captured.out
+    ), "expected column is full exception for input 1"

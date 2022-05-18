@@ -109,3 +109,18 @@ class TestGame:
         assert game.player_one.color == connect_four.RED
         assert game.player_two.color == connect_four.BLUE
         assert game.board.plays == {i: [] for i in range(7)}
+
+    def test_play_turn(self, new_game, capsys):
+        new_game.play_turn(8)
+        captured = capsys.readouterr()
+        assert "column from 1 to 7" in captured.out
+        new_game.play_turn("a")
+        captured = capsys.readouterr()
+        assert "column from 1 to 7" in captured.out
+        for i in range(6):
+            new_game.play_turn(1)
+            turn = connect_four.RED if i % 2 == 0 else connect_four.BLUE
+            assert new_game.board.plays[0][i] == turn
+        new_game.play_turn(1)
+        captured = capsys.readouterr()
+        assert "column is full" in captured.out

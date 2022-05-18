@@ -141,6 +141,16 @@ def game_win_states():
                     g.board = b
                     yield g
 
+                if x - 3 > 0 and y + 3 < 6:
+                    b = connect_four.Board()
+                    xs = [x - i for i in four]
+                    ys = [i + y for i in four]
+                    for i in four:
+                        b.plays[xs[i]][ys[i]] = color
+                    g = connect_four.Game()
+                    g.board = b
+                    yield g
+
     return state_generator()
 
 

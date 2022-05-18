@@ -100,5 +100,16 @@ class Game:
                             ]
                         ):
                             return this_sequence
+
+                    if x - 3 > 0 and y + 3 < 6:
+                        this_tile = self.board.plays[x][y]
+                        this_sequence = [(x - i, y + i) for i in range(4)]
+                        if all(
+                            [
+                                self.board.plays[i][j] == this_tile
+                                for i, j in this_sequence
+                            ]
+                        ):
+                            return this_sequence
         else:
             return None

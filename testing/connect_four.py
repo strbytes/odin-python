@@ -46,3 +46,13 @@ class Player:
 
     def __str__(self):
         return self.name
+
+
+class Game:
+    def __init__(self, p1_name="Player 1", p2_name="Player 2"):
+        if not type(p1_name) == str:
+            raise TypeError("invalid type for p1_name: expected string")
+        if not type(p2_name) == str:
+            raise TypeError("invalid type for p2_name, expected string")
+        self.board = Board()
+        self.player_one, self.player_two = Player(p1_name, RED), Player(p2_name, BLUE)

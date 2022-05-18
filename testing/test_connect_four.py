@@ -63,6 +63,15 @@ class TestBoard:
                 e_full_column.value
             ), f"expected 'full column' exception at column {i}"
 
+    def test_add_win(self, new_board, game_win_states):
+        for g in game_win_states:
+            coords = get_coords_from_win_state(g)
+            new_board.add_win(coords)
+            for x, y in coords:
+                assert (
+                    new_board.plays[x][y] == connect_four.GREEN
+                ), f"expected GREEN at new_board.plays[{x}][{y}]"
+
     def test__str__(self, new_board):
         # visual testing only
         pass

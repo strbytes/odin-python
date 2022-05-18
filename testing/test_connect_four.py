@@ -102,7 +102,7 @@ class TestPlayer:
 
 @pytest.fixture
 def new_game(player_one, player_two):
-    return connect_four.Game(player_one, player_two)
+    return connect_four.Game("1", "2")
 
 
 @pytest.fixture
@@ -180,12 +180,12 @@ def game_no_win_states():
 
 class TestGame:
     def test_init(self):
-        with pytest.raises(ValueError) as type_error:
+        with pytest.raises(TypeError) as type_error:
             connect_four.Game(1, "2")
         assert "invalid type" in str(
             type_error.value
         ), "expected 'invalid type' exception for input 2"
-        with pytest.raises(ValueError) as type_error:
+        with pytest.raises(TypeError) as type_error:
             connect_four.Game("1", 2)
         assert "invalid type" in str(
             type_error.value
@@ -204,7 +204,7 @@ class TestGame:
             game.player_two.color == connect_four.BLUE
         ), "expected game.player_two.color to be BLUE"
         assert game.board.plays == {
-            i: [] for i in range(7)
+            i: ["" for _ in range(6)] for i in range(7)
         }, "expected game board to be empty Board"
 
     def test_play_turn(self, new_game, capsys):

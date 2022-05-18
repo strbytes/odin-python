@@ -67,3 +67,40 @@ class Game:
             raise TypeError(f"play_turn only accepts integers, not {type(column)}")
         self.board.add_play(column - 1, self.whose_turn.color)
         self.turn += 1
+
+    def check_win(self):
+        for x in range(7):
+            for y in range(6):
+                if self.board.plays[x][y]:
+                    if x + 3 < 7:
+                        this_tile = self.board.plays[x][y]
+                        this_sequence = [(x + i, y) for i in range(4)]
+                        if all(
+                            [
+                                self.board.plays[i][j] == this_tile
+                                for i, j in this_sequence
+                            ]
+                        ):
+                            return this_sequence
+                    if y + 3 < 6:
+                        this_tile = self.board.plays[x][y]
+                        this_sequence = [(x, y + i) for i in range(4)]
+                        if all(
+                            [
+                                self.board.plays[i][j] == this_tile
+                                for i, j in this_sequence
+                            ]
+                        ):
+                            return this_sequence
+                    if x + 3 < 7 and y + 3 < 6:
+                        this_tile = self.board.plays[x][y]
+                        this_sequence = [(x + i, y + i) for i in range(4)]
+                        if all(
+                            [
+                                self.board.plays[i][j] == this_tile
+                                for i, j in this_sequence
+                            ]
+                        ):
+                            return this_sequence
+        else:
+            return None

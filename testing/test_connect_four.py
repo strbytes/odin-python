@@ -223,9 +223,9 @@ class TestGame:
         assert "out of bounds" in str(
             out_of_bounds.value
         ), "expected out of bounds exception for input 8"
-        with pytest.raises(TypeError) as type_error:
+        with pytest.raises(ValueError) as type_error:
             new_game.play_turn("a")
-        assert "accepts integers" in str(
+        assert "invalid literal" in str(
             type_error.value
         ), "expected TypeError for input 'a'"
         for i in range(6):

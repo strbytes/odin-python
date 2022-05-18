@@ -220,3 +220,13 @@ class TestGame:
             "column is full" in captured.out
         ), "expected column is full exception for input 1"
 
+    def test_check_win(self, new_game, game_win_states, game_no_win_states):
+        assert new_game.check_win() == None, "expected no win for new game"
+        for g in game_win_states:
+            assert g.check_win() == get_coords_from_win_state(
+                g
+            ), f"expected output of check_win to match coordinates from the supplied win state, {get_coords_from_win_state(g)}"
+        for g in game_no_win_states:
+            assert (
+                g.check_win() == None
+            ), "expected output of check_win to be None for no-win state"

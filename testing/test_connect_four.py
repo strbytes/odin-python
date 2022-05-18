@@ -95,6 +95,79 @@ def new_game(player_one, player_two):
     return connect_four.Game(player_one, player_two)
 
 
+@pytest.fixture
+def game_win_states():
+    def state_generator():
+        four = range(4)
+        for y in range(6):
+            for x in range(7):
+                color = connect_four.RED if (x + y) % 2 == 0 else connect_four.BLUE
+
+                if x + 3 < 7:
+                    b = connect_four.Board()
+                    xs = [i + x for i in four]
+                    for play_x in xs:
+                        b.plays[play_x][y] = color
+                    g = connect_four.Game()
+                    g.board = b
+                    yield g
+
+                if y + 3 < 6:
+                    b = connect_four.Board()
+                    ys = [i + y for i in four]
+                    for play_y in ys:
+                        b.plays[x][play_y] = color
+                    g = connect_four.Game()
+                    g.board = b
+                    yield g
+
+                if x + 3 < 7 and y + 3 < 6:
+                    b = connect_four.Board()
+                    xs = [i + x for i in four]
+                    ys = [i + y for i in four]
+                    for i in four:
+                        b.plays[xs[i]][ys[i]] = color
+                    g = connect_four.Game()
+                    g.board = b
+                    yield g
+
+    return state_generator()
+
+
+def get_coords_from_win_state(game):
+    coords = []
+    for y in range(6):
+        for x in range(7):
+            if game.board.plays[x][y]:
+                coords.append((x, y))
+    return coords
+
+
+@pytest.fixture
+def game_no_win_states():
+    def state_generator():
+        four = range(4)
+        no_win = [
+            [connect_four.RED, connect_four.BLUE, connect_four.BLUE, connect_four.BLUE],
+            [connect_four.BLUE, connect_four.RED, connect_four.BLUE, connect_four.BLUE],
+            [connect_four.RED, connect_four.RED, connect_four.BLUE, connect_four.RED],
+            [connect_four.RED, connect_four.RED, connect_four.RED, connect_four.BLUE],
+        ]
+
+        for y in range(6):
+            for x in range(7):
+                if x + 3 < 7 and y + 3 < 6:
+                    b = connect_four.Board()
+                    for x_play in four:
+                        for y_play in four:
+                            b.plays[x_play + x][y_play + y] = no_win[x_play][y_play]
+                    g = connect_four.Game()
+                    g.board = b
+                    yield g
+
+    return state_generator()
+
+
 class TestGame:
     def test_init(self):
         with pytest.raises(ValueError) as type_error:

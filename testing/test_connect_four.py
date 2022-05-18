@@ -1,4 +1,5 @@
 import connect_four, pytest
+from io import StringIO
 
 
 @pytest.fixture
@@ -239,3 +240,18 @@ class TestGame:
             assert (
                 g.check_win() == None
             ), "expected output of check_win to be None for no-win state"
+
+
+def test_play_game(player_one, player_two, monkeypatch, capsys):
+    # first play on the fourth row should create a diagonal win
+    plays = StringIO("\n".join([str(i + 1) for i in range(3 * 7 + 1)]))
+    monkeypatch.setattr("sys.stdin", plays)
+    assert connect_four.play_game("1", "2") == player_two
+    captured = capsys.readouterr()
+    assert "has won!" in captured
+    # first play on the fourth column should create a horizontal win
+    plays = StringIO("\n".join([str(i // 6 + 1) for i in range(3 * 6 + 1)]))
+    monkeypatch.setattr("sys.stdin", plays)
+    assert connect_four.play_game("1", "2") == player_one
+    captured = capsys.readouterr()
+    assert "has won!" in captured

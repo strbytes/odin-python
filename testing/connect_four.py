@@ -63,9 +63,7 @@ class Game:
         return self.player_one if self.turn % 2 == 0 else self.player_two
 
     def play_turn(self, column):
-        if type(column) is not int:
-            raise TypeError(f"play_turn only accepts integers, not {type(column)}")
-        self.board.add_play(column - 1, self.whose_turn.color)
+        self.board.add_play(int(column) - 1, self.whose_turn.color)
         self.turn += 1
 
     def check_win(self):

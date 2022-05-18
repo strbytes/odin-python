@@ -9,7 +9,7 @@ def new_board():
 class TestBoard:
     def test_init(self, new_board):
         assert isinstance(new_board, connect_four.Board)
-        assert new_board.plays == {i: [] for i in range(7)}
+        assert new_board.plays == {i: ["" for _ in range(6)] for i in range(7)}
 
     def test_add_play(self, new_board):
         # test filling a single row

@@ -113,3 +113,34 @@ class Game:
                             return this_sequence
         else:
             return None
+
+
+def play_game(p1_name, p2_name):
+    g = Game(p1_name, p2_name)
+    colors = {RED: "red", BLUE: "blue"}
+    winner = None
+    while winner is None:
+        print()
+        print(g.board)
+        print(
+            g.whose_turn.name,
+            "it's your turn! Your color is",
+            colors[g.whose_turn.color] + ".",
+        )
+
+        try:
+            g.play_turn(input("Select a column: "))
+        except:
+            print("\n*** Please choose from columns 1 to 7 ***")
+        winner = g.check_win()
+    g.turn -= 1  # correct for turn number incrementing after a winning play
+    g.board.add_win(winner)
+    print()
+    print(g.board)
+    print(g.whose_turn, "has won!")
+
+
+if __name__ == "__main__":
+    p1_name = input("Player one, enter your name: ")
+    p2_name = input("Player two, enter your name: ")
+    play_game(p1_name, p2_name)

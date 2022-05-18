@@ -250,30 +250,3 @@ class TestGame:
             assert (
                 g.check_win() == None
             ), "expected output of check_win to be None for no-win state"
-
-
-def test_play_game(monkeypatch, capsys):
-    # first play on the fourth row should create a diagonal win
-    plays = StringIO("8\n" + "\n".join([str(i + 1) for i in range(3 * 7 + 1)]) + "\n")
-    monkeypatch.setattr("sys.stdin", plays)
-    assert (
-        connect_four.play_game("1", "2").name == "2"
-    ), "expected player two object returned as winner"
-    captured = capsys.readouterr()
-    assert (
-        "columns from 1 to 7" in captured
-    ), "expected message about rejected input '8'"
-    assert "has won!" in captured, "expected win message"
-    # first play on the fourth column should create a horizontal win
-    plays = StringIO(
-        "a\n" + "\n".join([str(i // 6 + 1) for i in range(3 * 6 + 1)]) + "\n"
-    )
-    monkeypatch.setattr("sys.stdin", plays)
-    assert (
-        connect_four.play_game("1", "2").name == "1"
-    ), "expected player one object returned as winner"
-    captured = capsys.readouterr()
-    assert (
-        "columns from 1 to 7" in captured
-    ), "expected message about rejected input 'a'"
-    assert "has won!" in captured, "expected win message"

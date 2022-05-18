@@ -172,16 +172,30 @@ class TestGame:
     def test_init(self):
         with pytest.raises(ValueError) as type_error:
             connect_four.Game(1, "2")
-        assert "invalid type" in str(type_error.value)
+        assert "invalid type" in str(
+            type_error.value
+        ), "expected 'invalid type' exception for input 2"
         with pytest.raises(ValueError) as type_error:
             connect_four.Game("1", 2)
-        assert "invalid type" in str(type_error.value)
+        assert "invalid type" in str(
+            type_error.value
+        ), "expected 'invalid type' exception for input 1"
         game = connect_four.Game("1", "2")
-        assert isinstance(game.player_one, connect_four.Player)
-        assert isinstance(game.player_two, connect_four.Player)
-        assert game.player_one.color == connect_four.RED
-        assert game.player_two.color == connect_four.BLUE
-        assert game.board.plays == {i: [] for i in range(7)}
+        assert isinstance(
+            game.player_one, connect_four.Player
+        ), "expected game.player_one to be Player"
+        assert isinstance(
+            game.player_two, connect_four.Player
+        ), "expected game.player_two to be Player"
+        assert (
+            game.player_one.color == connect_four.RED
+        ), "expected game.player_one.color to be RED"
+        assert (
+            game.player_two.color == connect_four.BLUE
+        ), "expected game.player_two.color to be BLUE"
+        assert game.board.plays == {
+            i: [] for i in range(7)
+        }, "expected game board to be empty Board"
 
     def test_play_turn(self, new_game, capsys):
         new_game.play_turn(8)

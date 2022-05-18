@@ -56,3 +56,14 @@ class Game:
             raise TypeError("invalid type for p2_name, expected string")
         self.board = Board()
         self.player_one, self.player_two = Player(p1_name, RED), Player(p2_name, BLUE)
+        self.turn = 0
+
+    @property
+    def whose_turn(self):
+        return self.player_one if self.turn % 2 == 0 else self.player_two
+
+    def play_turn(self, column):
+        if type(column) is not int:
+            raise TypeError(f"play_turn only accepts integers, not {type(column)}")
+        self.board.add_play(column - 1, self.whose_turn.color)
+        self.turn += 1

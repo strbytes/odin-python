@@ -88,3 +88,24 @@ class TestPlayer:
     def test__str__(self, player_one, player_two):
         assert str(player_one) == "1"
         assert str(player_two) == "2"
+
+
+@pytest.fixture
+def new_game(player_one, player_two):
+    return connect_four.Game(player_one, player_two)
+
+
+class TestGame:
+    def test_init(self):
+        with pytest.raises(ValueError) as type_error:
+            connect_four.Game(1, "2")
+        assert "invalid type" in str(type_error.value)
+        with pytest.raises(ValueError) as type_error:
+            connect_four.Game("1", 2)
+        assert "invalid type" in str(type_error.value)
+        game = connect_four.Game("1", "2")
+        assert isinstance(game.player_one, connect_four.Player)
+        assert isinstance(game.player_two, connect_four.Player)
+        assert game.player_one.color == connect_four.RED
+        assert game.player_two.color == connect_four.BLUE
+        assert game.board.plays == {i: [] for i in range(7)}

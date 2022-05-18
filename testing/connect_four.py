@@ -1,7 +1,8 @@
 RED = "\x1b[91m"
 BLUE = "\x1b[94m"
+GREEN = "\x1b[92m"
 ENDC = "\x1b[0m"
-# ]]] Treesitter thinks the brackets in the quotes are code and is indenting based on them -_-;
+# ]]]] Treesitter thinks the brackets in the quotes are code and is indenting based on them -_-;
 
 
 class Board:
@@ -21,6 +22,10 @@ class Board:
             if self.plays[column][y] == "":
                 self.plays[column][y] = color
                 break
+
+    def add_win(self, coords):
+        for x, y in coords:
+            self.plays[x][y] = GREEN
 
     def __str__(self):
         board = ""

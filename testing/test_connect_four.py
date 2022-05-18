@@ -83,7 +83,7 @@ class TestPlayer:
         assert player_one.name == "1"
         assert player_one.color == connect_four.RED
         assert player_two.name == "2"
-        assert player_two.color == connect_four.RED
+        assert player_two.color == connect_four.BLUE
 
     def test__str__(self, player_one, player_two):
         assert str(player_one) == "1"

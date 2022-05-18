@@ -200,14 +200,23 @@ class TestGame:
     def test_play_turn(self, new_game, capsys):
         new_game.play_turn(8)
         captured = capsys.readouterr()
-        assert "column from 1 to 7" in captured.out
+        assert (
+            "column from 1 to 7" in captured.out
+        ), "expected message about incorrect play attempt for input 8"
         new_game.play_turn("a")
         captured = capsys.readouterr()
-        assert "column from 1 to 7" in captured.out
+        assert (
+            "column from 1 to 7" in captured.out
+        ), "expected message about incorrect play attempt for input 'a'"
         for i in range(6):
             new_game.play_turn(1)
             turn = connect_four.RED if i % 2 == 0 else connect_four.BLUE
-            assert new_game.board.plays[0][i] == turn
+            assert (
+                new_game.board.plays[0][i] == turn
+            ), f"expected {turn} at new_game.board.plays[0][{i}]"
         new_game.play_turn(1)
         captured = capsys.readouterr()
-        assert "column is full" in captured.out
+        assert (
+            "column is full" in captured.out
+        ), "expected column is full exception for input 1"
+

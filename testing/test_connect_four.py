@@ -242,40 +242,28 @@ class TestGame:
             ), "expected output of check_win to be None for no-win state"
 
 
-def test_play_game(player_one, player_two, monkeypatch, capsys):
+def test_play_game(monkeypatch, capsys):
     # first play on the fourth row should create a diagonal win
-    plays = StringIO("\n".join([str(i + 1) for i in range(3 * 7 + 1)]))
+    plays = StringIO("8\n" + "\n".join([str(i + 1) for i in range(3 * 7 + 1)]) + "\n")
     monkeypatch.setattr("sys.stdin", plays)
-    assert connect_four.play_game("1", "2") == player_two
+    assert (
+        connect_four.play_game("1", "2").name == "2"
+    ), "expected player two object returned as winner"
     captured = capsys.readouterr()
-    assert "has won!" in captured
+    assert (
+        "columns from 1 to 7" in captured
+    ), "expected message about rejected input '8'"
+    assert "has won!" in captured, "expected win message"
     # first play on the fourth column should create a horizontal win
-    plays = StringIO("\n".join([str(i // 6 + 1) for i in range(3 * 6 + 1)]))
+    plays = StringIO(
+        "a\n" + "\n".join([str(i // 6 + 1) for i in range(3 * 6 + 1)]) + "\n"
+    )
     monkeypatch.setattr("sys.stdin", plays)
-    assert connect_four.play_game("1", "2") == player_one
-    captured = capsys.readouterr()
-    assert "has won!" in captured
-
-
-def test_play_game_errors(new_game, capsys):
-    new_game.play_turn(8)
+    assert (
+        connect_four.play_game("1", "2").name == "1"
+    ), "expected player one object returned as winner"
     captured = capsys.readouterr()
     assert (
-        "column from 1 to 7" in captured.out
-    ), "expected message about incorrect play attempt for input 8"
-    new_game.play_turn("a")
-    captured = capsys.readouterr()
-    assert (
-        "column from 1 to 7" in captured.out
-    ), "expected message about incorrect play attempt for input 'a'"
-    for i in range(6):
-        new_game.play_turn(1)
-        turn = connect_four.RED if i % 2 == 0 else connect_four.BLUE
-        assert (
-            new_game.board.plays[0][i] == turn
-        ), f"expected {turn} at new_game.board.plays[0][{i}]"
-    new_game.play_turn(1)
-    captured = capsys.readouterr()
-    assert (
-        "column is full" in captured.out
-    ), "expected column is full exception for input 1"
+        "columns from 1 to 7" in captured
+    ), "expected message about rejected input 'a'"
+    assert "has won!" in captured, "expected win message"
